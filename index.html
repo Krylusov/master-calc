@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#111827">
-    <title>Master Calc PWA</title>
+    <title>Master Calc PRO</title>
+    
     <link rel="manifest" href="manifest.json">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
     <link rel="apple-touch-icon" href="icon.png">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="window.chartError=true"></script>
+
     <style>
         :root {
             --bg: #111827; --surface: #1f2937; --primary: #8b5cf6; --success: #10b981; 
@@ -23,7 +21,7 @@
         * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; padding: 0; background-color: var(--bg); color: var(--text-main); padding-bottom: 90px; font-size: 16px; overflow-x: hidden; }
 
-        /* Уведомления */
+        /* Всплывающие уведомления */
         #toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--success); color: white; padding: 12px 24px; border-radius: 30px;
@@ -31,11 +29,10 @@
             transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999;
         }
         #toast.show { top: 20px; }
-        #toast.error { background: var(--danger); }
 
         /* Навигация */
         nav { position: fixed; bottom: 0; width: 100%; background: rgba(31, 41, 55, 0.95); display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--border); z-index: 1000; backdrop-filter: blur(10px); }
-        .tab-btn { flex: 1; padding: 14px 0; border: none; background: none; font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s; }
+        .tab-btn { flex: 1; padding: 14px 0; border: none; background: none; font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .tab-btn.active { color: var(--primary); }
         .tab-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; }
 
@@ -52,18 +49,13 @@
         .input-control:focus { border-color: var(--primary); }
         
         .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; margin-top: 16px; }
-        .btn-icon { background: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 10px; display: flex; align-items: center; justify-content: center; }
+        .btn-icon { background: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 10px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
 
         .receipt { background: #1f2937; border: 2px solid var(--primary); border-radius: var(--radius-lg); padding: 24px; margin-top: 24px; display: none; }
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        
         .history-item { background: var(--surface); padding: 16px; border-radius: var(--radius-lg); margin-bottom: 12px; border: 1px solid var(--border); position: relative; }
-        .btn-del { position: absolute; top: 12px; right: 12px; color: var(--text-muted); border: none; background: none; font-size: 18px; }
-        
-        .chart-container { background: var(--surface); padding: 16px; border-radius: var(--radius-lg); margin-bottom: 20px; border: 1px solid var(--border); min-height: 200px; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .btn-del { position: absolute; top: 12px; right: 12px; color: var(--text-muted); border: none; background: none; font-size: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -78,41 +70,32 @@
 
     <div id="calc" class="tab-content active">
         <h2 style="text-align: center;">Новый расчет</h2>
-        
         <div class="card">
             <div style="display:flex; gap:10px; align-items:flex-end;">
                 <div style="flex:1;">
                     <label style="font-size:12px; color:var(--text-muted)">Имя клиента / Примечание</label>
                     <input type="text" id="client-name" class="input-control" style="width:100%; text-align:left; margin-top:5px;" placeholder="Анна (Блонд)">
                 </div>
-                <button class="btn-icon" onclick="getContact()" title="Выбрать из телефона">
+                <button class="btn-icon" onclick="getContact()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 </button>
             </div>
         </div>
 
         <div class="card">
-            <div class="input-row"><span>Тариф аренды</span>
-                <select id="rent-type" class="input-control" style="width:120px;"><option value="std">Стандарт</option><option value="prem">Премиум</option></select>
-            </div>
             <div class="input-row"><span>Часы работы</span><input type="number" id="work-time" class="input-control" value="1" min="0"></div>
             <div class="input-row"><span>Часы аренды</span><input type="number" id="rent-time" class="input-control" value="1" min="0"></div>
             <div class="input-row"><span>Расходники (шт)</span><input type="number" id="cons-count" class="input-control" value="1" min="0"></div>
         </div>
 
-        <div style="font-size:12px; color:var(--text-muted); margin: 20px 0 10px 5px; font-weight:700; text-transform:uppercase;">Материалы (г)</div>
         <div class="card">
-            <div class="input-row"><span>Estel</span><input type="number" id="m-estel" class="input-control" value="0" min="0"></div>
-            <div class="input-row"><span>Bicolor</span><input type="number" id="m-bicolor" class="input-control" value="0" min="0"></div>
-            <div class="input-row"><span>NUK</span><input type="number" id="m-nuk" class="input-control" value="0" min="0"></div>
-            <div class="input-row"><span>Пудра / Оксид</span><input type="number" id="m-other" class="input-control" value="0" min="0"></div>
+            <div class="input-row"><span>Estel (г)</span><input type="number" id="m-estel" class="input-control" value="0" min="0"></div>
+            <div class="input-row"><span>Bicolor (г)</span><input type="number" id="m-bicolor" class="input-control" value="0" min="0"></div>
         </div>
 
         <button class="btn btn-primary" onclick="calculate()">Рассчитать итог</button>
 
         <div id="res-box" class="receipt">
-            <div class="receipt-row"><span>Себестоимость:</span><span id="out-exp" class="val" style="color:var(--danger)">0 ₽</span></div>
-            <div style="height:1px; background:dashed var(--border); margin:15px 0;"></div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size:20px; font-weight:800;">ИТОГО:</span>
                 <span id="out-total" style="font-size:24px; font-weight:900; color:var(--primary)">0 ₽</span>
@@ -127,18 +110,11 @@
             <h2 style="margin:0">Аналитика</h2>
             <button class="btn" style="width:auto; padding:8px 15px; background:var(--surface); border:1px solid var(--border); font-size:12px;" onclick="exportExcel()">📥 Excel</button>
         </div>
-
         <div class="card" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border:none; text-align:center;">
-            <div style="font-size:12px; opacity:0.8;">Чистая прибыль за месяц</div>
+            <div style="font-size:12px; opacity:0.8;">Прибыль за всё время</div>
             <div id="stat-total" style="font-size:32px; font-weight:900;">0 ₽</div>
         </div>
-
-        <div class="chart-container" id="chart-area">
-            <canvas id="mainChart"></canvas>
-        </div>
-
         <div id="history-list"></div>
-        <button class="btn btn-danger" style="margin-top:20px; opacity:0.3;" onclick="clearAll()">Очистить телефон</button>
     </div>
 
     <div id="settings" class="tab-content">
@@ -146,55 +122,51 @@
         <div class="card">
             <div class="input-row"><span>Час работы</span><input type="number" id="s-hour" class="input-control" value="3500"></div>
             <div class="input-row"><span>Аренда (час)</span><input type="number" id="s-rent" class="input-control" value="320"></div>
-            <div class="input-row"><span>Расходники (компл)</span><input type="number" id="s-cons" class="input-control" value="300"></div>
             <div class="input-row"><span>Наценка (0.5 = 50%)</span><input type="number" id="s-mark" class="input-control" value="0.5" step="0.1"></div>
         </div>
-        <button class="btn btn-primary" onclick="saveSettings()">Сохранить настройки</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Сохранить</button>
     </div>
 
     <script>
-        // --- КОНФИГУРАЦИЯ ---
+        // Регистрация Service Worker для оффлайна
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
         const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0tKKL8nq1xvlN5UNBvr34XtQSNb2md-d8fmDOtGPVIyinAw/formResponse";
         let currentCalc = null;
-        let myChart = null;
 
-        // Всплывашки
-        function showToast(text, isError = false) {
+        function showToast(text) {
             const t = document.getElementById('toast');
             t.innerText = text;
-            t.className = isError ? 'error show' : 'show';
+            t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // Выбор контакта (Работает в PWA/Chrome)
+        // Вызов системных контактов
         async function getContact() {
             if (!('contacts' in navigator)) {
-                showToast("Браузер не поддерживает выбор контактов", true);
+                showToast("Браузер не поддерживает контакты");
                 return;
             }
             try {
                 const contacts = await navigator.contacts.select(['name'], { multiple: false });
                 if (contacts.length > 0) {
                     document.getElementById('client-name').value = contacts[0].name[0];
-                    showToast("Контакт выбран!");
                 }
             } catch (e) { console.log(e); }
         }
 
-        // Математика
         function calculate() {
-            const s = JSON.parse(localStorage.getItem('m_settings') || '{"hour":3500,"rent":320,"cons":300,"mark":0.5}');
+            const s = JSON.parse(localStorage.getItem('m_settings') || '{"hour":3500,"rent":320,"mark":0.5}');
             const wTime = parseFloat(document.getElementById('work-time').value) || 0;
             const rTime = parseFloat(document.getElementById('rent-time').value) || 0;
-            const cCount = parseInt(document.getElementById('cons-count').value) || 0;
             const mEstel = parseFloat(document.getElementById('m-estel').value) || 0;
             
-            const exp = (rTime * s.rent) + (cCount * s.cons) + (mEstel * 7.75); // пример с Эстель
-            const markup = exp * s.mark;
-            const total = exp + markup + (wTime * s.hour);
+            const exp = (rTime * s.rent) + (mEstel * 7.75); 
+            const total = exp + (exp * s.mark) + (wTime * s.hour);
             const profit = total - exp;
 
-            document.getElementById('out-exp').innerText = exp.toFixed(0) + ' ₽';
             document.getElementById('out-total').innerText = total.toFixed(0) + ' ₽';
             document.getElementById('out-profit').innerText = 'Прибыль: ' + profit.toFixed(0) + ' ₽';
             document.getElementById('res-box').style.display = 'block';
@@ -203,25 +175,23 @@
                 id: Date.now(),
                 date: new Date().toLocaleDateString(),
                 name: document.getElementById('client-name').value || 'Без имени',
-                total: total, profit: profit, exp: exp, 
-                recipe: `Estel: ${mEstel}г`, workTime: wTime
+                total: total, profit: profit, exp: exp, workTime: wTime
             };
             window.scrollTo(0, document.body.scrollHeight);
         }
 
-        // Сохранение и Облако
         function saveData() {
             if (!currentCalc) return;
             let hist = JSON.parse(localStorage.getItem('m_history') || '[]');
             hist.unshift(currentCalc);
             localStorage.setItem('m_history', JSON.stringify(hist));
 
-            // Тихая отправка в Google (iframe)
+            // Отправка в Google (через скрытый iframe)
             const ifr = document.createElement('iframe'); ifr.style.display='none'; document.body.appendChild(ifr);
             const f = document.createElement('form'); f.method='POST'; f.action=FORM_URL; f.target=ifr.name;
             const d = {
                 "entry.1004283552": currentCalc.date,
-                "entry.366487715": `[${currentCalc.name}] ${currentCalc.recipe}`,
+                "entry.366487715": `[${currentCalc.name}] Расчет`,
                 "entry.180743673": currentCalc.workTime,
                 "entry.1564921093": currentCalc.total.toFixed(0),
                 "entry.233391810": currentCalc.profit.toFixed(0),
@@ -230,11 +200,17 @@
             for (let k in d) { let i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=d[k]; f.appendChild(i); }
             document.body.appendChild(f); f.submit();
 
-            showToast("Сохранено в телефон и Облако!");
-            setTimeout(() => location.reload(), 1500);
+            showToast("Сохранено в Облако!");
+
+            // ОЧИСТКА ФОРМЫ (как вы просили)
+            document.getElementById('res-box').style.display = 'none';
+            document.getElementById('client-name').value = '';
+            document.getElementById('m-estel').value = '0';
+            document.getElementById('m-bicolor').value = '0';
+            currentCalc = null;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Навигация
         function openTab(id, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -243,75 +219,27 @@
             if (id === 'history') renderHistory();
         }
 
-        // Отрисовка истории и графика
         function renderHistory() {
             const hist = JSON.parse(localStorage.getItem('m_history') || '[]');
-            const list = document.getElementById('history-list');
             const total = hist.reduce((s, i) => s + i.profit, 0);
             document.getElementById('stat-total').innerText = total.toFixed(0) + ' ₽';
-
-            list.innerHTML = hist.map(i => `
+            document.getElementById('history-list').innerHTML = hist.map(i => `
                 <div class="history-item">
-                    <button class="btn-del" onclick="deleteItem(${i.id})">✕</button>
                     <div style="font-size:12px; color:var(--text-muted)">${i.date}</div>
-                    <div style="font-weight:700; margin:5px 0;">${i.name}</div>
-                    <div style="display:flex; justify-content:space-between; font-size:14px;">
-                        <span style="color:var(--success)">+ ${i.profit.toFixed(0)} ₽</span>
-                        <span style="opacity:0.6">${i.total.toFixed(0)} ₽</span>
-                    </div>
+                    <div style="font-weight:700;">${i.name}</div>
+                    <div style="color:var(--success)">+ ${i.profit.toFixed(0)} ₽</div>
                 </div>
             `).join('');
-
-            drawChart(hist);
-        }
-
-        function drawChart(hist) {
-            if (window.chartError) {
-                document.getElementById('chart-area').innerHTML = "<p style='color:var(--text-muted)'>Графики недоступны без интернета</p>";
-                return;
-            }
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            
-            const last5 = hist.slice(0, 5).reverse();
-            myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: last5.map(i => i.name),
-                    datasets: [{
-                        label: 'Прибыль',
-                        data: last5.map(i => i.profit),
-                        borderColor: '#8b5cf6',
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)'
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false } } }
-                }
-            });
-        }
-
-        function deleteItem(id) {
-            if(confirm("Удалить этот чек?")) {
-                let h = JSON.parse(localStorage.getItem('m_history') || '[]');
-                h = h.filter(i => i.id !== id);
-                localStorage.setItem('m_history', JSON.stringify(h));
-                renderHistory();
-            }
         }
 
         function exportExcel() {
             const hist = JSON.parse(localStorage.getItem('m_history') || '[]');
-            let csv = "\uFEFFДата;Клиент;Выручка;Прибыль;Затраты\n";
-            hist.forEach(i => { csv += `${i.date};${i.name};${i.total};${i.profit};${i.exp}\n`; });
+            let csv = "\uFEFFДата;Клиент;Сумма;Прибыль\n";
+            hist.forEach(i => { csv += `${i.date};${i.name};${i.total};${i.profit}\n`; });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = "Master_History.csv";
+            link.download = "MasterHistory.csv";
             link.click();
         }
 
@@ -319,15 +247,11 @@
             const s = {
                 hour: parseFloat(document.getElementById('s-hour').value),
                 rent: parseFloat(document.getElementById('s-rent').value),
-                cons: parseFloat(document.getElementById('s-cons').value),
                 mark: parseFloat(document.getElementById('s-mark').value)
             };
             localStorage.setItem('m_settings', JSON.stringify(s));
-            showToast("Настройки обновлены!");
+            showToast("Цены обновлены");
         }
-
-        function clearAll() { if(confirm("Удалить ВСЮ историю?")) { localStorage.removeItem('m_history'); location.reload(); } }
     </script>
 </body>
-
 </html>
