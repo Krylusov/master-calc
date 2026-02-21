@@ -110,4 +110,116 @@
         <div class="section-title">Ставки</div>
         <div class="card">
             <div class="input-row"><span>Час работы</span><input type="number" id="s-hour" class="input-control" value="3500"></div>
-            <div class="
+            <div class="input-row"><span>Час аренды</span><input type="number" id="s-rent" class="input-control" value="320"></div>
+            <div class="input-row"><span>Наценка (напр. 0.5)</span><input type="number" id="s-mark" class="input-control" value="0.5" step="0.1"></div>
+        </div>
+        <div class="section-title">Цены за 1 грамм</div>
+        <div class="card">
+            <div class="input-row"><span>Estel</span><input type="number" id="p-estel" class="input-control" value="7.75" step="0.01"></div>
+            <div class="input-row"><span>Bicolor</span><input type="number" id="p-bicolor" class="input-control" value="11.71" step="0.01"></div>
+            <div class="input-row"><span>NUK</span><input type="number" id="p-nuk" class="input-control" value="19.6" step="0.01"></div>
+            <div class="input-row"><span>Оксид/Пудра</span><input type="number" id="p-other" class="input-control" value="1" step="0.01"></div>
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">Сохранить базу</button>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+
+        const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0tKKL8nq1xvlN5UNBvr34XtQSNb2md-d8fmDOtGPVIyinAw/formResponse";
+        let currentCalc = null;
+
+        function showToast(text) {
+            const t = document.getElementById('toast'); t.innerText = text; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        async function getContact() {
+            if (!('contacts' in navigator)) return showToast("Нет доступа к контактам");
+            try {
+                const c = await navigator.contacts.select(['name'], { multiple: false });
+                if (c.length > 0) document.getElementById('client-name').value = c[0].name[0];
+            } catch (e) { console.log(e); }
+        }
+
+        function calculate() {
+            const s = JSON.parse(localStorage.getItem('m_v7_settings') || '{"hour":3500,"rent":320,"mark":0.5,"pEstel":7.75,"pBicolor":11.71,"pNuk":19.6,"pOther":1}');
+            const wTime = parseFloat(document.getElementById('work-time').value) || 0;
+            const rTime = parseFloat(document.getElementById('rent-time').value) || 0;
+            
+            const gEstel = parseFloat(document.getElementById('m-estel').value) || 0;
+            const gBicolor = parseFloat(document.getElementById('m-bicolor').value) || 0;
+            const gNuk = parseFloat(document.getElementById('m-nuk').value) || 0;
+            const gOther = parseFloat(document.getElementById('m-other').value) || 0;
+
+            const matCost = (gEstel * s.pEstel) + (gBicolor * s.pBicolor) + (gNuk * s.pNuk) + (gOther * s.pOther);
+            const expenses = matCost + (rTime * s.rent);
+            const total = expenses + (matCost * s.mark) + (wTime * s.hour);
+            const profit = total - expenses;
+
+            document.getElementById('out-total').innerText = total.toFixed(0) + ' ₽';
+            document.getElementById('out-profit').innerText = 'Прибыль: ' + profit.toFixed(0) + ' ₽';
+            document.getElementById('res-box').style.display = 'block';
+
+            currentCalc = {
+                id: Date.now(), date: new Date().toLocaleDateString(),
+                name: document.getElementById('client-name').value || 'Без имени',
+                total: total, profit: profit, exp: expenses, workTime: wTime
+            };
+        }
+
+        function saveData() {
+            if (!currentCalc) return;
+            let h = JSON.parse(localStorage.getItem('m_v7_history') || '[]');
+            h.unshift(currentCalc); localStorage.setItem('m_v7_history', JSON.stringify(h));
+
+            const f = document.createElement('form'); f.method='POST'; f.action=FORM_URL;
+            const d = { "entry.1004283552": currentCalc.date, "entry.366487715": `[${currentCalc.name}] Расчет`, "entry.180743673": currentCalc.workTime, "entry.1564921093": currentCalc.total.toFixed(0), "entry.233391810": currentCalc.profit.toFixed(0), "entry.1441756294": currentCalc.exp.toFixed(0) };
+            for (let k in d) { let i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=d[k]; f.appendChild(i); }
+            document.body.appendChild(f); f.submit();
+
+            showToast("Сохранено!");
+            document.getElementById('res-box').style.display = 'none';
+            ['client-name','m-estel','m-bicolor','m-nuk','m-other'].forEach(id => document.getElementById(id).value = id.includes('name') ? '' : '0');
+        }
+
+        function openTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active'); btn.classList.add('active');
+            if (id === 'history') renderHistory();
+            if (id === 'settings') loadSettings();
+        }
+
+        function saveSettings() {
+            const s = {
+                hour: parseFloat(document.getElementById('s-hour').value),
+                rent: parseFloat(document.getElementById('s-rent').value),
+                mark: parseFloat(document.getElementById('s-mark').value),
+                pEstel: parseFloat(document.getElementById('p-estel').value),
+                pBicolor: parseFloat(document.getElementById('p-bicolor').value),
+                pNuk: parseFloat(document.getElementById('p-nuk').value),
+                pOther: parseFloat(document.getElementById('p-other').value)
+            };
+            localStorage.setItem('m_v7_settings', JSON.stringify(s));
+            showToast("База обновлена!");
+        }
+
+        function loadSettings() {
+            const s = JSON.parse(localStorage.getItem('m_v7_settings') || '{"hour":3500,"rent":320,"mark":0.5,"pEstel":7.75,"pBicolor":11.71,"pNuk":19.6,"pOther":1}');
+            document.getElementById('s-hour').value = s.hour; document.getElementById('s-rent').value = s.rent;
+            document.getElementById('s-mark').value = s.mark; document.getElementById('p-estel').value = s.pEstel;
+            document.getElementById('p-bicolor').value = s.pBicolor; document.getElementById('p-nuk').value = s.pNuk;
+            document.getElementById('p-other').value = s.pOther;
+        }
+
+        function renderHistory() {
+            const h = JSON.parse(localStorage.getItem('m_v7_history') || '[]');
+            document.getElementById('stat-total').innerText = h.reduce((s, i) => s + i.profit, 0).toFixed(0) + ' ₽';
+            document.getElementById('history-list').innerHTML = h.map(i => `<div class="history-item"><b>${i.name}</b> (${i.date})<br><span style="color:var(--success)">+ ${i.profit.toFixed(0)} ₽</span></div>`).join('');
+        }
+
+        window.onload = loadSettings;
+    </script>
+</body>
+</html>
