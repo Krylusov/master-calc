@@ -1,15 +1,18 @@
+const CACHE_NAME = 'master-calc-v7';
+const ASSETS = [
+  'index.html',
+  'manifest.json',
+  'icon.png'
+];
+
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open('master-calc-v1').then((cache) => cache.addAll([
-      'index.html',
-      'manifest.json',
-      'icon.png'
-    ]))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((response) => response || fetch(e.request))
+    caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });
