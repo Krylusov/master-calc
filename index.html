@@ -16,51 +16,58 @@
             --border: #374151; --radius-lg: 20px; --radius-md: 12px;
         }
         * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; padding: 0; background-color: var(--bg); color: var(--text-main); padding-bottom: 90px; }
+        body { margin: 0; padding: 0; background-color: var(--bg); color: var(--text-main); padding-bottom: 100px; }
         
+        /* Система уведомлений */
         #toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--success); color: white; padding: 12px 24px; border-radius: 30px;
-            font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: top 0.4s; z-index: 9999;
+            font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: top 0.4s; z-index: 9999; text-align: center; width: 90%;
         }
         #toast.show { top: 20px; }
         #toast.error { background: var(--danger); }
         
-        nav { position: fixed; bottom: 0; width: 100%; background: rgba(31, 41, 55, 0.95); display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--border); z-index: 1000; backdrop-filter: blur(10px); }
-        .tab-btn { flex: 1; padding: 12px 0; border: none; background: none; font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        /* Навигация с защитой от перехвата кликов */
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(31, 41, 55, 0.98); display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--border); z-index: 1000; }
+        .tab-btn { flex: 1; padding: 15px 0; border: none; background: none; font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
         .tab-btn.active { color: var(--primary); }
-        .tab-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .tab-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; pointer-events: none; /* Запрет перехвата клика иконкой */ }
         
-        .tab-content { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        /* Контент */
+        .tab-content { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
+        .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
+        /* Карточки и инпуты */
         .card { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
         .input-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
         .input-row:last-child { border-bottom: none; }
         .input-label { font-size: 15px; font-weight: 600; }
-        .input-label span { display: block; font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 2px;}
-        .input-control { width: 90px; padding: 8px 10px; background: #374151; border: 1px solid #4b5563; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; text-align: center; color: white; outline: none; }
+        .input-label span { display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px;}
+        .input-control { width: 90px; padding: 10px; background: #374151; border: 1px solid #4b5563; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; text-align: center; color: white; outline: none; }
+        .input-control:focus { border-color: var(--primary); }
         select.input-control { width: 120px; appearance: none; }
         
-        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        /* Кнопки */
+        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; margin-top: 16px; }
         .btn-icon { background: var(--primary); color: white; border: none; border-radius: var(--radius-md); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
         
+        /* Чек и история */
         .receipt { background: #1f2937; border: 1px solid var(--primary); border-radius: var(--radius-lg); padding: 20px; margin-top: 20px; display: none; }
         .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); }
         .receipt-row .val { font-weight: 600; color: var(--text-main); }
         .receipt-divider { height: 1px; background: dashed var(--border); margin: 12px 0; }
-        
         .history-item { background: var(--surface); padding: 15px; border-radius: var(--radius-lg); margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
+        .btn-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--danger); font-size: 18px; cursor: pointer; padding: 5px; }
         .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin: 20px 0 10px 5px; }
     </style>
 </head>
 <body>
 
-<div id="toast">Готово!</div>
+<div id="toast">Система готова!</div>
 
 <nav>
     <button class="tab-btn active" onclick="openTab('calc', this)"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"></path><line x1="16" y1="3" x2="16" y2="21"></line><line x1="8" y1="3" x2="8" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>Расчет</button>
@@ -112,7 +119,7 @@
         <div class="receipt-row"><span>Материалы</span><span class="val" id="res-materials">0 ₽</span></div>
         <div class="receipt-divider"></div>
         <div class="receipt-row"><span>Затраты (себест.)</span><span class="val" style="color: var(--danger)" id="res-expenses">0 ₽</span></div>
-        <div class="receipt-row"><span>Наценка</span><span class="val" id="res-markup">0 ₽</span></div>
+        <div class="receipt-row"><span>Наценка (от мат+расх)</span><span class="val" id="res-markup">0 ₽</span></div>
         <div class="receipt-divider"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
             <span style="font-size:20px; font-weight:800;">ИТОГО:</span><span id="res-total" style="font-size:24px; font-weight:900; color:var(--text-main);">0 ₽</span>
@@ -164,16 +171,19 @@
 </div>
 
 <script>
-    // Безопасная инициализация PWA
-    try {
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-    } catch(e) { console.log("SW Error"); }
+    // 1. ОТЛОВ ВСЕХ ОШИБОК (Покажет красную табличку, если код сломался)
+    window.onerror = function(msg, url, line) {
+        showToast("Ошибка кода: строка " + line, true);
+        return false;
+    };
 
+    // Константы
     const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0tKKL8nq1xvlN5UNBvr34XtQSNb2md-d8fmDOtGPVIyinAw/formResponse";
-    const DB_KEY = "master_calc_v10";
-    const SETTINGS_KEY = "master_settings_v10";
+    const DB_KEY = "master_db_v11";
+    const SETTINGS_KEY = "master_set_v11";
     let currentCalc = null;
 
+    // Всплывающие уведомления
     function showToast(text, isError = false) {
         const t = document.getElementById('toast'); 
         t.innerText = text; 
@@ -182,14 +192,34 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
+    // 2. БРОНЕБОЙНОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    function openTab(id, btn) {
+        // Убираем активность со всех вкладок
+        const contents = document.getElementsByClassName('tab-content');
+        for(let i = 0; i < contents.length; i++) { contents[i].classList.remove('active'); }
+        
+        const buttons = document.getElementsByClassName('tab-btn');
+        for(let i = 0; i < buttons.length; i++) { buttons[i].classList.remove('active'); }
+        
+        // Включаем нужную
+        document.getElementById(id).classList.add('active'); 
+        if(btn) btn.classList.add('active');
+        
+        if (id === 'history') renderHistory();
+        if (id === 'settings') loadSettings();
+        window.scrollTo(0, 0);
+    }
+
+    // Контакты
     async function getContact() {
         if (!('contacts' in navigator)) return showToast("Нет доступа к контактам", true);
         try {
             const c = await navigator.contacts.select(['name'], { multiple: false });
             if (c.length > 0) document.getElementById('calc-client-name').value = c[0].name[0];
-        } catch (e) { showToast("Выбор отменен"); }
+        } catch (e) { console.log(e); }
     }
 
+    // Загрузка и сохранение настроек (Оригинальные значения)
     function getSettings() {
         try {
             return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || { 
@@ -199,250 +229,6 @@
         } catch(e) {
             return { hour: 3500, rentStd: 320, rentPrem: 420, cons: 300, mark: 0.5, pEstel: 7.75, pBicolor: 11.71, pNuk: 19.6, pNukClear: 7, pPowder: 5, pOxide: 1, pBooster: 30.4 };
         }
-    }
-
-    function loadSettings() {
-        try {
-            const s = getSettings();
-            document.getElementById('s-hour').value = s.hour; 
-            document.getElementById('s-rent-std').value = s.rentStd; 
-            document.getElementById('s-rent-prem').value = s.rentPrem;
-            document.getElementById('s-cons').value = s.cons; 
-            document.getElementById('s-mark').value = s.mark;
-            document.getElementById('p-estel').value = s.pEstel; 
-            document.getElementById('p-bicolor').value = s.pBicolor; 
-            document.getElementById('p-nuk').value = s.pNuk; 
-            document.getElementById('p-nuk-clear').value = s.pNukClear; 
-            document.getElementById('p-powder').value = s.pPowder; 
-            document.getElementById('p-oxide').value = s.pOxide; 
-            document.getElementById('p-booster').value = s.pBooster;
-        } catch(e) { console.error(e); }
-    }
-
-    function saveSettings() {
-        try {
-            const s = { 
-                hour: parseFloat(document.getElementById('s-hour').value) || 0, 
-                rentStd: parseFloat(document.getElementById('s-rent-std').value) || 0, 
-                rentPrem: parseFloat(document.getElementById('s-rent-prem').value) || 0, 
-                cons: parseFloat(document.getElementById('s-cons').value) || 0, 
-                mark: parseFloat(document.getElementById('s-mark').value) || 0, 
-                pEstel: parseFloat(document.getElementById('p-estel').value) || 0, 
-                pBicolor: parseFloat(document.getElementById('p-bicolor').value) || 0, 
-                pNuk: parseFloat(document.getElementById('p-nuk').value) || 0, 
-                pNukClear: parseFloat(document.getElementById('p-nuk-clear').value) || 0, 
-                pPowder: parseFloat(document.getElementById('p-powder').value) || 0, 
-                pOxide: parseFloat(document.getElementById('p-oxide').value) || 0, 
-                pBooster: parseFloat(document.getElementById('p-booster').value) || 0 
-            };
-            localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-            showToast("База цен сохранена!");
-        } catch(e) { showToast("Ошибка сохранения", true); }
-    }
-
-    function calculate() {
-        try {
-            const s = getSettings();
-            const clientName = document.getElementById('calc-client-name').value;
-            const wTime = parseFloat(document.getElementById('work-time').value) || 0;
-            const rTime = parseFloat(document.getElementById('rent-time').value) || 0;
-            const cCount = parseInt(document.getElementById('cons-count').value) || 0;
-            const rType = document.getElementById('rent-type').value;
-
-            const gE = parseFloat(document.getElementById('m-estel').value) || 0;
-            const gB = parseFloat(document.getElementById('m-bicolor').value) || 0;
-            const gN = parseFloat(document.getElementById('m-nuk').value) || 0;
-            const gNC = parseFloat(document.getElementById('m-nuk-clear').value) || 0;
-            const gP = parseFloat(document.getElementById('m-powder').value) || 0;
-            const gO = parseFloat(document.getElementById('m-oxide').value) || 0;
-            const gBoost = parseFloat(document.getElementById('m-booster').value) || 0;
-
-            const salary = wTime * s.hour;
-            const rent = rTime * (rType === 'std' ? s.rentStd : s.rentPrem);
-            const consumables = cCount * s.cons;
-
-            const matCost = (gE * s.pEstel) + (gB * s.pBicolor) + (gN * s.pNuk) + (gNC * s.pNukClear) + (gP * s.pPowder) + (gO * s.pOxide) + (gBoost * s.pBooster);
-            
-            let recipeArr = [];
-            if(gE > 0) recipeArr.push(`Estel: ${gE}г`);
-            if(gB > 0) recipeArr.push(`Bicolor: ${gB}г`);
-            if(gN > 0) recipeArr.push(`NUK: ${gN}г`);
-            if(gNC > 0) recipeArr.push(`NUK пр: ${gNC}г`);
-            if(gP > 0) recipeArr.push(`Пудра: ${gP}г`);
-            if(gO > 0) recipeArr.push(`Оксид: ${gO}г`);
-            if(gBoost > 0) recipeArr.push(`Бустер: ${gBoost}г`);
-
-            const exp = rent + consumables + matCost;
-            const markup = (matCost + consumables) * s.mark;
-            const total = exp + markup + salary;
-            const profit = total - exp;
-
-            document.getElementById('res-salary').innerText = salary.toFixed(1) + ' ₽';
-            document.getElementById('res-rent').innerText = rent.toFixed(1) + ' ₽';
-            document.getElementById('res-consum').innerText = consumables.toFixed(1) + ' ₽';
-            document.getElementById('res-materials').innerText = matCost.toFixed(1) + ' ₽';
-            document.getElementById('res-expenses').innerText = exp.toFixed(1) + ' ₽';
-            document.getElementById('res-markup').innerText = markup.toFixed(1) + ' ₽';
-            document.getElementById('res-total').innerText = Math.round(total) + ' ₽';
-            document.getElementById('res-profit').innerText = 'Прибыль: ' + Math.round(profit) +         
-        .card { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
-        .input-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
-        .input-row:last-child { border-bottom: none; }
-        .input-label { font-size: 15px; font-weight: 600; }
-        .input-label span { display: block; font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 2px;}
-        .input-control { width: 90px; padding: 8px 10px; background: #374151; border: 1px solid #4b5563; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; text-align: center; color: white; outline: none; }
-        select.input-control { width: 120px; appearance: none; }
-        
-        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; margin-top: 16px; }
-        .btn-icon { background: var(--primary); color: white; border: none; border-radius: var(--radius-md); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
-        
-        .receipt { background: #1f2937; border: 1px solid var(--primary); border-radius: var(--radius-lg); padding: 20px; margin-top: 20px; display: none; }
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); }
-        .receipt-row .val { font-weight: 600; color: var(--text-main); }
-        .receipt-divider { height: 1px; background: dashed var(--border); margin: 12px 0; }
-        
-        .history-item { background: var(--surface); padding: 15px; border-radius: var(--radius-lg); margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
-        .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin: 20px 0 10px 5px; }
-    </style>
-</head>
-<body>
-
-<div id="toast">Готово!</div>
-
-<nav>
-    <button class="tab-btn active" onclick="openTab('calc', this)"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"></path><line x1="16" y1="3" x2="16" y2="21"></line><line x1="8" y1="3" x2="8" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>Расчет</button>
-    <button class="tab-btn" onclick="openTab('history', this)"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>Стат-ка</button>
-    <button class="tab-btn" onclick="openTab('settings', this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>База</button>
-</nav>
-
-<div id="calc" class="tab-content active">
-    <h2 style="text-align: center; margin-bottom: 5px;">Новый расчет</h2>
-    
-    <div class="card">
-        <div class="input-label" style="margin-bottom: 8px;">Клиент / Примечание</div>
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="calc-client-name" class="input-control" style="flex:1; text-align:left;" placeholder="Анна (Блонд)">
-            <button class="btn-icon" onclick="getContact()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></button>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="input-row"><div class="input-label">Тариф аренды</div>
-            <select id="rent-type" class="input-control"><option value="std">Стандарт</option><option value="prem">Премиум</option></select>
-        </div>
-        <div class="input-row"><div class="input-label">Часы работы</div><input type="number" id="work-time" class="input-control" value="1" min="0" step="0.5"></div>
-        <div class="input-row"><div class="input-label">Часы аренды</div><input type="number" id="rent-time" class="input-control" value="1" min="0" step="0.5"></div>
-        <div class="input-row"><div class="input-label">Расходники (шт)</div><input type="number" id="cons-count" class="input-control" value="1" min="0"></div>
-    </div>
-
-    <div class="section-title">Красители (Граммы)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Estel</div><input type="number" id="m-estel" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">Bicolor</div><input type="number" id="m-bicolor" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">NUK</div><input type="number" id="m-nuk" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">NUK прозрачный</div><input type="number" id="m-nuk-clear" class="input-control" value="0" min="0"></div>
-    </div>
-
-    <div class="section-title">Прочие материалы (Граммы)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Пудра</div><input type="number" id="m-powder" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">Оксид</div><input type="number" id="m-oxide" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">Бустер</div><input type="number" id="m-booster" class="input-control" value="0" min="0" step="0.5"></div>
-    </div>
-
-    <button class="btn btn-primary" onclick="calculate()">Рассчитать стоимость</button>
-
-    <div id="res-box" class="receipt">
-        <div class="receipt-row"><span>Зарплата мастера</span><span class="val" id="res-salary">0 ₽</span></div>
-        <div class="receipt-row"><span>Аренда кресла</span><span class="val" id="res-rent">0 ₽</span></div>
-        <div class="receipt-row"><span>Расходники</span><span class="val" id="res-consum">0 ₽</span></div>
-        <div class="receipt-row"><span>Материалы</span><span class="val" id="res-materials">0 ₽</span></div>
-        <div class="receipt-divider"></div>
-        <div class="receipt-row"><span>Затраты (себест.)</span><span class="val" style="color: var(--danger)" id="res-expenses">0 ₽</span></div>
-        <div class="receipt-row"><span>Наценка</span><span class="val" id="res-markup">0 ₽</span></div>
-        <div class="receipt-divider"></div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-            <span style="font-size:20px; font-weight:800;">ИТОГО:</span><span id="res-total" style="font-size:24px; font-weight:900; color:var(--text-main);">0 ₽</span>
-        </div>
-        <div style="text-align:right; margin-top:5px; color:var(--success); font-weight:700;" id="res-profit">Прибыль: 0 ₽</div>
-        <button class="btn btn-success" onclick="saveData()">Сохранить чек в Облако</button>
-    </div>
-</div>
-
-<div id="history" class="tab-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="margin:0">Аналитика</h2>
-        <button class="btn" style="width:auto; padding:8px 15px; background:var(--surface); border:1px solid var(--border); font-size:12px;" onclick="exportExcel()">📥 Excel</button>
-    </div>
-    <div class="card" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border:none; text-align:center;">
-        <div style="font-size:12px; opacity:0.8;">Общая чистая прибыль</div>
-        <div id="stat-total" style="font-size:32px; font-weight:900;">0 ₽</div>
-    </div>
-    <div id="history-list"></div>
-</div>
-
-<div id="settings" class="tab-content">
-    <h2>База цен</h2>
-    <div class="section-title">Ставки и Аренда</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Цена работы <span>За 1 час</span></div><input type="number" id="s-hour" class="input-control" value="3500"></div>
-        <div class="input-row"><div class="input-label">Аренда Стандарт <span>За 1 час</span></div><input type="number" id="s-rent-std" class="input-control" value="320"></div>
-        <div class="input-row"><div class="input-label">Аренда Премиум <span>За 1 час</span></div><input type="number" id="s-rent-prem" class="input-control" value="420"></div>
-    </div>
-    <div class="section-title">Расходники и Наценка</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Расходники <span>За 1 комплект</span></div><input type="number" id="s-cons" class="input-control" value="300"></div>
-        <div class="input-row"><div class="input-label">Наценка <span>0.5 = 50%</span></div><input type="number" id="s-mark" class="input-control" value="0.5" step="0.1"></div>
-    </div>
-    <div class="section-title">Красители (за 1 гр)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Estel</div><input type="number" id="p-estel" class="input-control" value="7.75" step="0.01"></div>
-        <div class="input-row"><div class="input-label">Bicolor</div><input type="number" id="p-bicolor" class="input-control" value="11.71" step="0.01"></div>
-        <div class="input-row"><div class="input-label">NUK</div><input type="number" id="p-nuk" class="input-control" value="19.6" step="0.01"></div>
-        <div class="input-row"><div class="input-label">NUK прозрачный</div><input type="number" id="p-nuk-clear" class="input-control" value="7" step="0.01"></div>
-    </div>
-    <div class="section-title">Прочие материалы (за 1 гр)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Пудра</div><input type="number" id="p-powder" class="input-control" value="5" step="0.01"></div>
-        <div class="input-row"><div class="input-label">Оксид</div><input type="number" id="p-oxide" class="input-control" value="1" step="0.01"></div>
-        <div class="input-row"><div class="input-label">Бустер</div><input type="number" id="p-booster" class="input-control" value="30.4" step="0.1"></div>
-    </div>
-    <button class="btn btn-primary" onclick="saveSettings()">Сохранить настройки</button>
-</div>
-
-<script>
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-
-    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0tKKL8nq1xvlN5UNBvr34XtQSNb2md-d8fmDOtGPVIyinAw/formResponse";
-    const DB_KEY = "master_calc_v9_ultimate";
-    const SETTINGS_KEY = "master_settings_v9_ultimate";
-    let currentCalc = null;
-
-    function showToast(text) {
-        const t = document.getElementById('toast'); t.innerText = text; t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-        input.addEventListener('input', function() { if (this.value !== "" && this.value < 0) this.value = 0; });
-    });
-
-    async function getContact() {
-        if (!('contacts' in navigator)) return showToast("Нет доступа к контактам");
-        try {
-            const c = await navigator.contacts.select(['name'], { multiple: false });
-            if (c.length > 0) document.getElementById('calc-client-name').value = c[0].name[0];
-        } catch (e) { console.log(e); }
-    }
-
-    function getSettings() {
-        return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || { 
-            hour: 3500, rentStd: 320, rentPrem: 420, cons: 300, mark: 0.5, 
-            pEstel: 7.75, pBicolor: 11.71, pNuk: 19.6, pNukClear: 7, pPowder: 5, pOxide: 1, pBooster: 30.4 
-        };
     }
 
     function loadSettings() {
@@ -480,21 +266,22 @@
         showToast("База цен сохранена!");
     }
 
+    // Точная Математика
     function calculate() {
         const s = getSettings();
         const clientName = document.getElementById('calc-client-name').value;
-        const wTime = parseFloat(document.getElementById('work-time').value) || 0;
-        const rTime = parseFloat(document.getElementById('rent-time').value) || 0;
+        const wTime = parseFloat(document.getElementById('work-time').value.replace(',', '.')) || 0;
+        const rTime = parseFloat(document.getElementById('rent-time').value.replace(',', '.')) || 0;
         const cCount = parseInt(document.getElementById('cons-count').value) || 0;
         const rType = document.getElementById('rent-type').value;
 
-        const gE = parseFloat(document.getElementById('m-estel').value) || 0;
-        const gB = parseFloat(document.getElementById('m-bicolor').value) || 0;
-        const gN = parseFloat(document.getElementById('m-nuk').value) || 0;
-        const gNC = parseFloat(document.getElementById('m-nuk-clear').value) || 0;
-        const gP = parseFloat(document.getElementById('m-powder').value) || 0;
-        const gO = parseFloat(document.getElementById('m-oxide').value) || 0;
-        const gBoost = parseFloat(document.getElementById('m-booster').value) || 0;
+        const gE = parseFloat(document.getElementById('m-estel').value.replace(',', '.')) || 0;
+        const gB = parseFloat(document.getElementById('m-bicolor').value.replace(',', '.')) || 0;
+        const gN = parseFloat(document.getElementById('m-nuk').value.replace(',', '.')) || 0;
+        const gNC = parseFloat(document.getElementById('m-nuk-clear').value.replace(',', '.')) || 0;
+        const gP = parseFloat(document.getElementById('m-powder').value.replace(',', '.')) || 0;
+        const gO = parseFloat(document.getElementById('m-oxide').value.replace(',', '.')) || 0;
+        const gBoost = parseFloat(document.getElementById('m-booster').value.replace(',', '.')) || 0;
 
         const salary = wTime * s.hour;
         const rent = rTime * (rType === 'std' ? s.rentStd : s.rentPrem);
@@ -503,16 +290,16 @@
         const matCost = (gE * s.pEstel) + (gB * s.pBicolor) + (gN * s.pNuk) + (gNC * s.pNukClear) + (gP * s.pPowder) + (gO * s.pOxide) + (gBoost * s.pBooster);
         
         let recipeArr = [];
-        if(gE > 0) recipeArr.push(`Estel: ${gE}г`);
-        if(gB > 0) recipeArr.push(`Bicolor: ${gB}г`);
-        if(gN > 0) recipeArr.push(`NUK: ${gN}г`);
-        if(gNC > 0) recipeArr.push(`NUK пр: ${gNC}г`);
-        if(gP > 0) recipeArr.push(`Пудра: ${gP}г`);
-        if(gO > 0) recipeArr.push(`Оксид: ${gO}г`);
-        if(gBoost > 0) recipeArr.push(`Бустер: ${gBoost}г`);
+        if(gE > 0) recipeArr.push(`Estel:${gE}г`);
+        if(gB > 0) recipeArr.push(`Bic:${gB}г`);
+        if(gN > 0) recipeArr.push(`NUK:${gN}г`);
+        if(gNC > 0) recipeArr.push(`NUK.пр:${gNC}г`);
+        if(gP > 0) recipeArr.push(`Пуд:${gP}г`);
+        if(gO > 0) recipeArr.push(`Окс:${gO}г`);
+        if(gBoost > 0) recipeArr.push(`Буст:${gBoost}г`);
 
         const exp = rent + consumables + matCost;
-        const markup = (matCost + consumables) * s.mark;
+        const markup = (matCost + consumables) * s.mark; // Наценка от (материалы + расходники)
         const total = exp + markup + salary;
         const profit = total - exp;
 
@@ -531,454 +318,96 @@
         currentCalc = { 
             id: Date.now(), date: new Date().toLocaleDateString(), 
             name: clientName || 'Без имени', 
-            recipe: recipeArr.length > 0 ? recipeArr.join(', ') : 'Без материалов',
+            recipe: recipeArr.length > 0 ? recipeArr.join(', ') : 'Без мат-в',
             total, profit, exp, workTime: wTime 
         };
     }
 
+    // Сохранение и отправка
     function saveData() {
         if (!currentCalc) return;
+        
+        // В телефон
         let h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-        h.unshift(currentCalc); localStor        
-        .card { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
-        .input-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
-        .input-row:last-child { border-bottom: none; }
-        .input-label { font-size: 15px; font-weight: 600; }
-        .input-label span { display: block; font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 2px;}
-        .input-control { width: 90px; padding: 8px 10px; background: #374151; border: 1px solid #4b5563; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; text-align: center; color: white; outline: none; }
-        select.input-control { width: 120px; appearance: none; }
-        
-        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; margin-top: 16px; }
-        .btn-icon { background: var(--primary); color: white; border: none; border-radius: var(--radius-md); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
-        
-        .receipt { background: #1f2937; border: 1px solid var(--primary); border-radius: var(--radius-lg); padding: 20px; margin-top: 20px; display: none; }
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); }
-        .receipt-row .val { font-weight: 600; color: var(--text-main); }
-        .receipt-divider { height: 1px; background: dashed var(--border); margin: 12px 0; }
-        
-        .history-item { background: var(--surface); padding: 15px; border-radius: var(--radius-lg); margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
-        .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin: 20px 0 10px 5px; }
-    </style>
-</head>
-<body>
+        h.unshift(currentCalc); 
+        localStorage.setItem(DB_KEY, JSON.stringify(h));
 
-<div id="toast">Готово!</div>
-
-<nav>
-    <button class="tab-btn active" onclick="openTab('calc', this)"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"></path><line x1="16" y1="3" x2="16" y2="21"></line><line x1="8" y1="3" x2="8" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>Расчет</button>
-    <button class="tab-btn" onclick="openTab('history', this)"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>Статистика</button>
-    <button class="tab-btn" onclick="openTab('settings', this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>База</button>
-</nav>
-
-<div id="calc" class="tab-content active">
-    <h2 style="text-align: center; margin-bottom: 5px;">Новый расчет</h2>
-    <p style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 0;">Версия Ultimate</p>
-    
-    <div class="card">
-        <div class="input-label" style="margin-bottom: 8px;">Клиент / Примечание</div>
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="calc-client-name" class="input-control" style="flex:1; text-align:left;" placeholder="Например: Анна (Блонд)">
-            <button class="btn-icon" onclick="getContact()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></button>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="input-row"><div class="input-label">Тариф аренды</div>
-            <select id="calc-rent-type" class="input-control"><option value="std">Стандарт</option><option value="prem">Премиум</option></select>
-        </div>
-        <div class="input-row"><div class="input-label">Часы работы</div><input type="number" id="calc-work-time" class="input-control" value="1" min="0" step="0.5"></div>
-        <div class="input-row"><div class="input-label">Часы аренды</div><input type="number" id="calc-rent-time" class="input-control" value="1" min="0" step="0.5"></div>
-        <div class="input-row"><div class="input-label">Расходники (шт)</div><input type="number" id="calc-cons-count" class="input-control" value="1" min="0"></div>
-    </div>
-
-    <div class="section-title">Красители (Граммы)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Estel</div><input type="number" id="calc-estel" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">Bicolor</div><input type="number" id="calc-bicolor" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">NUK</div><input type="number" id="calc-nuk" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">NUK прозрачный</div><input type="number" id="calc-nuk-clear" class="input-control" value="0" min="0"></div>
-    </div>
-
-    <div class="section-title">Прочие материалы (Граммы)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Пудра</div><input type="number" id="calc-powder" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">Оксид</div><input type="number" id="calc-oxide" class="input-control" value="0" min="0"></div>
-        <div class="input-row"><div class="input-label">Бустер</div><input type="number" id="calc-booster" class="input-control" value="0" min="0" step="0.5"></div>
-    </div>
-
-    <button class="btn btn-primary" onclick="calculate()">Рассчитать стоимость</button>
-
-    <div id="result-container" class="receipt">
-        <div class="receipt-row"><span>Зарплата мастера</span><span class="val" id="res-salary">0 ₽</span></div>
-        <div class="receipt-row"><span>Аренда кресла</span><span class="val" id="res-rent">0 ₽</span></div>
-        <div class="receipt-row"><span>Расходники</span><span class="val" id="res-consum">0 ₽</span></div>
-        <div class="receipt-row"><span>Материалы</span><span class="val" id="res-materials">0 ₽</span></div>
-        <div class="receipt-divider"></div>
-        <div class="receipt-row"><span>Затраты (себест.)</span><span class="val" style="color: var(--danger)" id="res-expenses">0 ₽</span></div>
-        <div class="receipt-row"><span>Наценка</span><span class="val" id="res-markup">0 ₽</span></div>
-        <div class="receipt-divider"></div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-            <span style="font-size:20px; font-weight:800;">ИТОГО:</span><span id="res-total" style="font-size:24px; font-weight:900; color:var(--text-main);">0 ₽</span>
-        </div>
-        <div style="text-align:right; margin-top:5px; color:var(--success); font-weight:700;" id="res-profit">Прибыль: 0 ₽</div>
-        <button class="btn btn-success" onclick="saveData()">Сохранить чек в Облако</button>
-    </div>
-</div>
-
-<div id="history" class="tab-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="margin:0">Аналитика</h2>
-        <button class="btn" style="width:auto; padding:8px 15px; background:var(--surface); border:1px solid var(--border); font-size:12px;" onclick="exportExcel()">📥 Excel</button>
-    </div>
-    <div class="card" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border:none; text-align:center;">
-        <div style="font-size:12px; opacity:0.8;">Общая чистая прибыль</div>
-        <div id="stat-total" style="font-size:32px; font-weight:900;">0 ₽</div>
-    </div>
-    <div id="history-list"></div>
-</div>
-
-<div id="settings" class="tab-content">
-    <h2>База цен</h2>
-    <div class="section-title">Ставки и Аренда</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Цена работы <span>За 1 час</span></div><input type="number" id="set-hour" class="input-control" value="3500"></div>
-        <div class="input-row"><div class="input-label">Аренда Стандарт <span>За 1 час</span></div><input type="number" id="set-rent-std" class="input-control" value="320"></div>
-        <div class="input-row"><div class="input-label">Аренда Премиум <span>За 1 час</span></div><input type="number" id="set-rent-prem" class="input-control" value="420"></div>
-    </div>
-    <div class="section-title">Расходники и Наценка</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Расходники <span>За 1 комплект</span></div><input type="number" id="set-cons-base" class="input-control" value="300"></div>
-        <div class="input-row"><div class="input-label">Наценка <span>0.5 = 50%</span></div><input type="number" id="set-markup" class="input-control" value="0.5" step="0.1"></div>
-    </div>
-    <div class="section-title">Красители (за 1 гр)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Estel</div><input type="number" id="set-estel" class="input-control" value="7.75" step="0.01"></div>
-        <div class="input-row"><div class="input-label">Bicolor</div><input type="number" id="set-bicolor" class="input-control" value="11.71" step="0.01"></div>
-        <div class="input-row"><div class="input-label">NUK</div><input type="number" id="set-nuk" class="input-control" value="19.6" step="0.01"></div>
-        <div class="input-row"><div class="input-label">NUK прозрачный</div><input type="number" id="set-nuk-clear" class="input-control" value="7" step="0.01"></div>
-    </div>
-    <div class="section-title">Прочие материалы (за 1 гр)</div>
-    <div class="card">
-        <div class="input-row"><div class="input-label">Пудра</div><input type="number" id="set-powder" class="input-control" value="5" step="0.01"></div>
-        <div class="input-row"><div class="input-label">Оксид</div><input type="number" id="set-oxide" class="input-control" value="1" step="0.01"></div>
-        <div class="input-row"><div class="input-label">Бустер</div><input type="number" id="set-booster" class="input-control" value="30.4" step="0.1"></div>
-    </div>
-    <button class="btn btn-primary" onclick="saveSettings()">Сохранить настройки</button>
-</div>
-
-<script>
-    // Подключение PWA оффлайн-воркера
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-
-    // Константы
-    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0tKKL8nq1xvlN5UNBvr34XtQSNb2md-d8fmDOtGPVIyinAw/formResponse";
-    const DB_KEY = "master_history_ultimate";
-    const SETTINGS_KEY = "master_settings_ultimate";
-    let currentCalculation = null;
-
-    // Всплывашки
-    function showToast(text) {
-        const t = document.getElementById('toast'); 
-        t.innerText = text; 
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    // Запрет минусов в полях
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-        input.addEventListener('input', function() { if (this.value !== "" && this.value < 0) this.value = 0; });
-    });
-
-    // Контакты из телефона
-    async function getContact() {
-        if (!('contacts' in navigator)) return showToast("Доступ к контактам заблокирован браузером");
-        try {
-            const contacts = await navigator.contacts.select(['name'], { multiple: false });
-            if (contacts.length > 0 && contacts[0].name.length > 0) {
-                document.getElementById('calc-client-name').value = contacts[0].name[0];
-            }
-        } catch (ex) { console.log(ex); }
-    }
-
-    // Загрузка настроек по умолчанию (Как было в версии 4)
-    function getSettings() {
-        let def = {
-            hour: 3500, rentStd: 320, rentPrem: 420, consBase: 300, markup: 0.5,
-            prices: { estel: 7.75, bicolor: 11.71, nuk: 19.6, nukClear: 7, powder: 5, oxide: 1, booster: 30.4 }
-        };
-        try {
-            const saved = localStorage.getItem(SETTINGS_KEY);
-            if (saved) return JSON.parse(saved);
-        } catch(e) {}
-        return def;
-    }
-
-    // Заполнение вкладки "База"
-    function loadSettings() {
-        const s = getSettings();
-        document.getElementById('set-hour').value = s.hour; 
-        document.getElementById('set-rent-std').value = s.rentStd; 
-        document.getElementById('set-rent-prem').value = s.rentPrem;
-        document.getElementById('set-cons-base').value = s.consBase; 
-        document.getElementById('set-markup').value = s.markup;
-        document.getElementById('set-estel').value = s.prices.estel; 
-        document.getElementById('set-bicolor').value = s.prices.bicolor;
-        document.getElementById('set-nuk').value = s.prices.nuk; 
-        document.getElementById('set-nuk-clear').value = s.prices.nukClear;
-        document.getElementById('set-powder').value = s.prices.powder; 
-        document.getElementById('set-oxide').value = s.prices.oxide; 
-        document.getElementById('set-booster').value = s.prices.booster;
-    }
-
-    // Сохранение вкладки "База"
-    function saveSettings() {
-        const settings = {
-            hour: parseFloat(document.getElementById('set-hour').value) || 0,
-            rentStd: parseFloat(document.getElementById('set-rent-std').value) || 0,
-            rentPrem: parseFloat(document.getElementById('set-rent-prem').value) || 0,
-            consBase: parseFloat(document.getElementById('set-cons-base').value) || 0,
-            markup: parseFloat(document.getElementById('set-markup').value) || 0,
-            prices: {
-                estel: parseFloat(document.getElementById('set-estel').value) || 0,
-                bicolor: parseFloat(document.getElementById('set-bicolor').value) || 0,
-                nuk: parseFloat(document.getElementById('set-nuk').value) || 0,
-                nukClear: parseFloat(document.getElementById('set-nuk-clear').value) || 0,
-                powder: parseFloat(document.getElementById('set-powder').value) || 0,
-                oxide: parseFloat(document.getElementById('set-oxide').value) || 0,
-                booster: parseFloat(document.getElementById('set-booster').value) || 0
-            }
-        };
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-        showToast('База цен успешно обновлена!');
-    }
-
-    // ВЕЛИКАЯ МАТЕМАТИКА (Восстановлена на 100% из Версии 4)
-    function calculate() {
-        const s = getSettings();
-        const clientName = document.getElementById('calc-client-name').value;
-        const workTime = parseFloat(document.getElementById('calc-work-time').value.replace(',', '.')) || 0;
-        const rentTime = parseFloat(document.getElementById('calc-rent-time').value.replace(',', '.')) || 0;
-        const consCount = parseInt(document.getElementById('calc-cons-count').value) || 0;
-        const rentType = document.getElementById('calc-rent-type').value;
-        
-        // Базовые расчеты
-        const salary = workTime * s.hour;
-        const rent = rentTime * (rentType === 'std' ? s.rentStd : s.rentPrem);
-        const consumables = consCount * s.consBase;
-
-        // Граммовки
-        const grams = {
-            estel: parseFloat(document.getElementById('calc-estel').value.replace(',', '.')) || 0,
-            bicolor: parseFloat(document.getElementById('calc-bicolor').value.replace(',', '.')) || 0,
-            nuk: parseFloat(document.getElementById('calc-nuk').value.replace(',', '.')) || 0,
-            nukClear: parseFloat(document.getElementById('calc-nuk-clear').value.replace(',', '.')) || 0,
-            powder: parseFloat(document.getElementById('calc-powder').value.replace(',', '.')) || 0,
-            oxide: parseFloat(document.getElementById('calc-oxide').value.replace(',', '.')) || 0,
-            booster: parseFloat(document.getElementById('calc-booster').value.replace(',', '.')) || 0
-        };
-
-        let materialsCost = 0; 
-        let recipeArr = [];
-        
-        // Сборка рецепта и цены за материалы
-        for (let key in grams) { 
-            if (grams[key] > 0) { 
-                materialsCost += grams[key] * (s.prices[key] || 0); 
-                recipeArr.push(key + ': ' + grams[key] + 'г'); 
-            } 
-        }
-
-        // Итоги
-        const expenses = rent + consumables + materialsCost;
-        const markupAmount = (materialsCost + consumables) * s.markup;
-        const total = expenses + markupAmount + salary;
-        const pureProfit = total - expenses;
-
-        // Вывод на экран
-        document.getElementById('res-salary').innerText = salary.toFixed(1) + ' ₽';
-        document.getElementById('res-rent').innerText = r        .input-row:last-child { border-bottom: none; }
-        .input-control { width: 100px; padding: 10px 12px; background: #374151; border: 1px solid #4b5563; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; text-align: center; color: white; outline: none; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; margin-top: 16px; }
-        .btn-icon { background: var(--primary); color: white; border: none; border-radius: var(--radius-md); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
-        .receipt { background: #1f2937; border: 2px solid var(--primary); border-radius: var(--radius-lg); padding: 20px; margin-top: 20px; display: none; }
-        .history-item { background: var(--surface); padding: 15px; border-radius: var(--radius-lg); margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-muted); font-size: 18px; }
-        .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin: 20px 0 10px 5px; }
-    </style>
-</head>
-<body>
-
-<div id="toast">Готово!</div>
-
-<nav>
-    <button class="tab-btn active" onclick="openTab('calc', this)"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"></path><line x1="16" y1="3" x2="16" y2="21"></line><line x1="8" y1="3" x2="8" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>Расчет</button>
-    <button class="tab-btn" onclick="openTab('history', this)"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>Статистика</button>
-    <button class="tab-btn" onclick="openTab('settings', this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>База</button>
-</nav>
-
-<div id="calc" class="tab-content active">
-    <h2 style="text-align: center;">Новый расчет</h2>
-    <div class="card">
-        <div style="display:flex; gap:10px; align-items:flex-end;">
-            <div style="flex:1;">
-                <label style="font-size:12px; color:var(--text-muted)">Имя клиента / Примечание</label>
-                <input type="text" id="client-name" class="input-control" style="width:100%; text-align:left; margin-top:5px;" placeholder="Анна (Блонд)">
-            </div>
-            <button class="btn-icon" onclick="getContact()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></button>
-        </div>
-    </div>
-    <div class="card">
-        <div class="input-row"><span>Часы работы</span><input type="number" id="work-time" class="input-control" value="1" min="0"></div>
-        <div class="input-row"><span>Часы аренды</span><input type="number" id="rent-time" class="input-control" value="1" min="0"></div>
-    </div>
-    <div class="section-title">Материалы (г)</div>
-    <div class="card">
-        <div class="input-row"><span>Estel</span><input type="number" id="m-estel" class="input-control" value="0"></div>
-        <div class="input-row"><span>Bicolor</span><input type="number" id="m-bicolor" class="input-control" value="0"></div>
-        <div class="input-row"><span>NUK</span><input type="number" id="m-nuk" class="input-control" value="0"></div>
-        <div class="input-row"><span>Оксид/Пудра</span><input type="number" id="m-other" class="input-control" value="0"></div>
-    </div>
-    <button class="btn btn-primary" onclick="calculate()">Рассчитать</button>
-    <div id="res-box" class="receipt">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>ИТОГО:</span><span id="out-total" style="font-weight:900; color:var(--primary); font-size:22px;">0 ₽</span></div>
-        <div style="text-align:right; color:var(--success); font-weight:700;" id="out-profit">Прибыль: 0 ₽</div>
-        <button class="btn btn-success" onclick="saveData()">В Облако</button>
-    </div>
-</div>
-
-<div id="history" class="tab-content">
-    <h2>Аналитика</h2>
-    <div class="card" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border:none; text-align:center;">
-        <div style="font-size:12px; opacity:0.8;">Общая прибыль</div>
-        <div id="stat-total" style="font-size:32px; font-weight:900;">0 ₽</div>
-    </div>
-    <div id="history-list"></div>
-</div>
-
-<div id="settings" class="tab-content">
-    <h2>База цен</h2>
-    <div class="section-title">Ставки</div>
-    <div class="card">
-        <div class="input-row"><span>Час работы</span><input type="number" id="s-hour" class="input-control" value="3500"></div>
-        <div class="input-row"><span>Час аренды</span><input type="number" id="s-rent" class="input-control" value="320"></div>
-        <div class="input-row"><span>Наценка (0.5)</span><input type="number" id="s-mark" class="input-control" value="0.5" step="0.1"></div>
-    </div>
-    <div class="section-title">Цены за 1 грамм</div>
-    <div class="card">
-        <div class="input-row"><span>Estel</span><input type="number" id="p-estel" class="input-control" value="7.75" step="0.01"></div>
-        <div class="input-row"><span>Bicolor</span><input type="number" id="p-bicolor" class="input-control" value="11.71" step="0.01"></div>
-        <div class="input-row"><span>NUK</span><input type="number" id="p-nuk" class="input-control" value="19.6" step="0.01"></div>
-        <div class="input-row"><span>Прочее</span><input type="number" id="p-other" class="input-control" value="1" step="0.01"></div>
-    </div>
-    <button class="btn btn-primary" onclick="saveSettings()">Сохранить базу</button>
-</div>
-
-<script>
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-
-    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0tKKL8nq1xvlN5UNBvr34XtQSNb2md-d8fmDOtGPVIyinAw/formResponse";
-    const DB_KEY = "master_calc_v8_stable";
-    const SETTINGS_KEY = "master_settings_v8_stable";
-    let currentCalc = null;
-
-    function showToast(text) {
-        const t = document.getElementById('toast'); t.innerText = text; t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    async function getContact() {
-        if (!('contacts' in navigator)) return showToast("Нет доступа к контактам");
-        try {
-            const c = await navigator.contacts.select(['name'], { multiple: false });
-            if (c.length > 0) document.getElementById('client-name').value = c[0].name[0];
-        } catch (e) { console.log(e); }
-    }
-
-    function calculate() {
-        const s = getSettings();
-        const wTime = parseFloat(document.getElementById('work-time').value) || 0;
-        const rTime = parseFloat(document.getElementById('rent-time').value) || 0;
-        const gE = parseFloat(document.getElementById('m-estel').value) || 0;
-        const gB = parseFloat(document.getElementById('m-bicolor').value) || 0;
-        const gN = parseFloat(document.getElementById('m-nuk').value) || 0;
-        const gO = parseFloat(document.getElementById('m-other').value) || 0;
-
-        const matCost = (gE * s.pEstel) + (gB * s.pBicolor) + (gN * s.pNuk) + (gO * s.pOther);
-        const exp = matCost + (rTime * s.rent);
-        const total = exp + (matCost * s.mark) + (wTime * s.hour);
-        const profit = total - exp;
-
-        document.getElementById('out-total').innerText = Math.round(total) + ' ₽';
-        document.getElementById('out-profit').innerText = 'Прибыль: ' + Math.round(profit) + ' ₽';
-        document.getElementById('res-box').style.display = 'block';
-
-        currentCalc = { id: Date.now(), date: new Date().toLocaleDateString(), name: document.getElementById('client-name').value || 'Без имени', total, profit, exp, workTime: wTime };
-    }
-
-    function saveData() {
-        if (!currentCalc) return;
-        let h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-        h.unshift(currentCalc); localStorage.setItem(DB_KEY, JSON.stringify(h));
-
+        // В Google Таблицу
         const ifr = document.createElement('iframe'); ifr.style.display='none'; document.body.appendChild(ifr);
         const f = document.createElement('form'); f.method='POST'; f.action=FORM_URL; f.target=ifr.name;
-        const d = { "entry.1004283552": currentCalc.date, "entry.366487715": `[${currentCalc.name}] Чеки`, "entry.180743673": currentCalc.workTime, "entry.1564921093": Math.round(currentCalc.total), "entry.233391810": Math.round(currentCalc.profit), "entry.1441756294": Math.round(currentCalc.exp) };
+        
+        const d = { 
+            "entry.1004283552": currentCalc.date, 
+            "entry.366487715": `[${currentCalc.name}] ${currentCalc.recipe}`, 
+            "entry.180743673": currentCalc.workTime, 
+            "entry.1564921093": Math.round(currentCalc.total), 
+            "entry.233391810": Math.round(currentCalc.profit), 
+            "entry.1441756294": Math.round(currentCalc.exp) 
+        };
         for (let k in d) { let i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=d[k]; f.appendChild(i); }
         document.body.appendChild(f); f.submit();
 
-        showToast("Успешно в Облако!");
+        showToast("Чек сохранен!");
         document.getElementById('res-box').style.display = 'none';
-        ['client-name','m-estel','m-bicolor','m-nuk','m-other'].forEach(id => document.getElementById(id).value = id.includes('name') ? '' : '0');
-        setTimeout(() => document.body.removeChild(ifr), 1000);
+        
+        document.getElementById('calc-client-name').value = '';
+        ['m-estel','m-bicolor','m-nuk','m-nuk-clear','m-powder','m-oxide','m-booster'].forEach(id => document.getElementById(id).value = '0');
+        currentCalc = null;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        setTimeout(() => document.body.removeChild(ifr), 1500);
     }
 
-    function getSettings() {
-        return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || { hour: 3500, rent: 320, mark: 0.5, pEstel: 7.75, pBicolor: 11.71, pNuk: 19.6, pOther: 1 };
-    }
-
-    function loadSettings() {
-        const s = getSettings();
-        document.getElementById('s-hour').value = s.hour; document.getElementById('s-rent').value = s.rent; document.getElementById('s-mark').value = s.mark;
-        document.getElementById('p-estel').value = s.pEstel; document.getElementById('p-bicolor').value = s.pBicolor; document.getElementById('p-nuk').value = s.pNuk; document.getElementById('p-other').value = s.pOther;
-    }
-
-    function saveSettings() {
-        const s = { hour: parseFloat(document.getElementById('s-hour').value), rent: parseFloat(document.getElementById('s-rent').value), mark: parseFloat(document.getElementById('s-mark').value), pEstel: parseFloat(document.getElementById('p-estel').value), pBicolor: parseFloat(document.getElementById('p-bicolor').value), pNuk: parseFloat(document.getElementById('p-nuk').value), pOther: parseFloat(document.getElementById('p-other').value) };
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-        showToast("База сохранена!");
-    }
-
-    function openTab(id, btn) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); btn.classList.add('active');
-        if (id === 'history') renderHistory();
-        if (id === 'settings') loadSettings();
-    }
-
+    // История
     function renderHistory() {
         const h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
         document.getElementById('stat-total').innerText = Math.round(h.reduce((s, i) => s + i.profit, 0)) + ' ₽';
-        document.getElementById('history-list').innerHTML = h.map(i => `<div class="history-item"><b>${i.name}</b> (${i.date})<br><span style="color:var(--success)">+ ${Math.round(i.profit)} ₽</span> <button class="btn-del" onclick="deleteItem(${i.id})">✕</button></div>`).join('');
+        document.getElementById('history-list').innerHTML = h.map(i => `
+            <div class="history-item">
+                <button class="btn-del" onclick="deleteItem(${i.id})">✖</button>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom: 4px;">${i.date}</div>
+                <div style="font-weight:700; color:var(--text-main); font-size: 16px;">${i.name}</div>
+                <div style="font-size:13px; color:var(--text-muted); margin: 6px 0;"><b>Рецепт:</b> ${i.recipe}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px;">
+                    <span style="color:var(--success); font-weight: 700;">+ ${Math.round(i.profit)} ₽</span> 
+                    <span style="color:var(--text-muted); font-size: 14px;">Чек: ${Math.round(i.total)} ₽</span>
+                </div>
+            </div>`).join('');
     }
 
     function deleteItem(id) {
-        if(confirm("Удалить?")) {
+        if(confirm("Удалить этот чек?")) {
             let h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
             h = h.filter(i => i.id !== id); localStorage.setItem(DB_KEY, JSON.stringify(h));
             renderHistory();
         }
     }
 
-    window.onload = loadSettings;
+    function exportExcel() {
+        const h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+        if(h.length === 0) return showToast("История пуста", true);
+        let csv = "\uFEFFДата;Клиент;Рецепт;Часы;Выручка;Прибыль;Затраты\n";
+        h.forEach(i => { csv += `"${i.date}";"${i.name}";"${i.recipe}";${i.workTime};${Math.round(i.total)};${Math.round(i.profit)};${Math.round(i.exp)}\n`; });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Master_History.csv";
+        link.click();
+    }
+
+    // Запуск при открытии
+    window.onload = function() {
+        loadSettings();
+        // Отключаем минусы в инпутах
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() { if (this.value !== "" && this.value < 0) this.value = 0; });
+        });
+        
+        // Отложенная регистрация PWA (чтобы не тормозить систему)
+        setTimeout(() => {
+            try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); } catch(e){}
+        }, 3000);
+    };
 </script>
 </body>
 </html>
-
-
-
