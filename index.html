@@ -32,7 +32,7 @@
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(31, 41, 55, 0.98); display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--border); z-index: 1000; }
         .tab-btn { flex: 1; padding: 15px 0; border: none; background: none; font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
         .tab-btn.active { color: var(--primary); }
-        .tab-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; pointer-events: none; /* Запрет перехвата клика иконкой */ }
+        .tab-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; pointer-events: none; }
         
         /* Контент */
         .tab-content { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
@@ -171,7 +171,7 @@
 </div>
 
 <script>
-    // 1. ОТЛОВ ВСЕХ ОШИБОК (Покажет красную табличку, если код сломался)
+    // 1. ОТЛОВ ВСЕХ ОШИБОК
     window.onerror = function(msg, url, line) {
         showToast("Ошибка кода: строка " + line, true);
         return false;
@@ -192,7 +192,7 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // 2. БРОНЕБОЙНОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    // БРОНЕБОЙНОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
     function openTab(id, btn) {
         // Убираем активность со всех вкладок
         const contents = document.getElementsByClassName('tab-content');
@@ -219,7 +219,7 @@
         } catch (e) { console.log(e); }
     }
 
-    // Загрузка и сохранение настроек (Оригинальные значения)
+    // Загрузка и сохранение настроек
     function getSettings() {
         try {
             return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || { 
@@ -299,7 +299,7 @@
         if(gBoost > 0) recipeArr.push(`Буст:${gBoost}г`);
 
         const exp = rent + consumables + matCost;
-        const markup = (matCost + consumables) * s.mark; // Наценка от (материалы + расходники)
+        const markup = (matCost + consumables) * s.mark; 
         const total = exp + markup + salary;
         const profit = total - exp;
 
@@ -323,8 +323,7 @@
         };
     }
 
-    // Сохранение и отправка
-   // Сохранение и отправка
+    // Сохранение и отправка (ИСПРАВЛЕНА ОШИБКА IFRAME)
     function saveData() {
         if (!currentCalc) return;
         
@@ -334,17 +333,17 @@
             h.unshift(currentCalc); 
             localStorage.setItem(DB_KEY, JSON.stringify(h));
 
-            // В Google Таблицу (ЗДЕСЬ БЫЛА ОШИБКА - вернул имя для iframe)
+            // В Google Таблицу через невидимый iframe
             const iframeName = 'hidden_iframe_' + Date.now();
             const ifr = document.createElement('iframe'); 
             ifr.style.display = 'none'; 
-            ifr.name = iframeName; // <--- Вот эта спасительная строчка
+            ifr.name = iframeName; // Обязательно даем имя!
             document.body.appendChild(ifr);
             
             const f = document.createElement('form'); 
             f.method = 'POST'; 
             f.action = FORM_URL; 
-            f.target = iframeName; 
+            f.target = iframeName; // Указываем форму на этот iframe
             
             const d = { 
                 "entry.1004283552": currentCalc.date, 
@@ -374,7 +373,7 @@
             // Возвращаемся в самое начало
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Убираем технический мусор
+            // Убираем технический мусор через 1.5 секунды
             setTimeout(() => { 
                 if (f.parentNode) document.body.removeChild(f);
                 if (ifr.parentNode) document.body.removeChild(ifr);
@@ -425,6 +424,7 @@
     // Запуск при открытии
     window.onload = function() {
         loadSettings();
+        
         // Отключаем минусы в инпутах
         document.querySelectorAll('input[type="number"]').forEach(input => {
             input.addEventListener('input', function() { if (this.value !== "" && this.value < 0) this.value = 0; });
@@ -438,4 +438,3 @@
 </script>
 </body>
 </html>
-
