@@ -18,7 +18,6 @@
         * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; padding: 0; background-color: var(--bg); color: var(--text-main); padding-bottom: 100px; }
         
-        /* Система уведомлений */
         #toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--success); color: white; padding: 12px 24px; border-radius: 30px;
@@ -28,18 +27,15 @@
         #toast.show { top: 20px; }
         #toast.error { background: var(--danger); }
         
-        /* Навигация с защитой от перехвата кликов */
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(31, 41, 55, 0.98); display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--border); z-index: 1000; }
         .tab-btn { flex: 1; padding: 15px 0; border: none; background: none; font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
         .tab-btn.active { color: var(--primary); }
         .tab-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; pointer-events: none; }
         
-        /* Контент */
         .tab-content { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
         .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        /* Карточки и инпуты */
         .card { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); }
         .input-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
         .input-row:last-child { border-bottom: none; }
@@ -49,20 +45,24 @@
         .input-control:focus { border-color: var(--primary); }
         select.input-control { width: 120px; appearance: none; }
         
-        /* Кнопки */
         .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; margin-top: 16px; }
         .btn-icon { background: var(--primary); color: white; border: none; border-radius: var(--radius-md); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
         
-        /* Чек и история */
         .receipt { background: #1f2937; border: 1px solid var(--primary); border-radius: var(--radius-lg); padding: 20px; margin-top: 20px; display: none; }
         .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); }
         .receipt-row .val { font-weight: 600; color: var(--text-main); }
-        .receipt-divider { height: 1px; background: dashed var(--border); margin: 12px 0; }
+        .receipt-divider { border-bottom: 1px dashed var(--border); margin: 12px 0; }
+        
         .history-item { background: var(--surface); padding: 15px; border-radius: var(--radius-lg); margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
         .btn-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--danger); font-size: 18px; cursor: pointer; padding: 5px; }
+        .btn-repeat { position: absolute; top: 12px; right: 45px; background: none; border: none; color: var(--primary); font-size: 18px; cursor: pointer; padding: 5px; font-weight: bold;}
         .section-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin: 20px 0 10px 5px; }
+        
+        .search-bar { width: 100%; padding: 12px 15px; background: #374151; border: 1px solid var(--border); border-radius: var(--radius-md); color: white; margin-bottom: 15px; font-size: 15px; outline: none; }
+        .search-bar:focus { border-color: var(--primary); }
+        .filtered-total { font-size: 14px; color: var(--success); font-weight: bold; margin-top: 5px; display: none; }
     </style>
 </head>
 <body>
@@ -72,7 +72,7 @@
 <nav>
     <button class="tab-btn active" onclick="openTab('calc', this)"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"></path><line x1="16" y1="3" x2="16" y2="21"></line><line x1="8" y1="3" x2="8" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>Расчет</button>
     <button class="tab-btn" onclick="openTab('history', this)"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>Стат-ка</button>
-    <button class="tab-btn" onclick="openTab('settings', this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>База</button>
+    <button class="tab-btn" onclick="openTab('settings', this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>База</button>
 </nav>
 
 <div id="calc" class="tab-content active">
@@ -81,7 +81,7 @@
     <div class="card">
         <div class="input-label" style="margin-bottom: 8px;">Клиент / Примечание</div>
         <div style="display:flex; gap:10px;">
-            <input type="text" id="calc-client-name" class="input-control" style="flex:1; text-align:left;" placeholder="Анна (Блонд)">
+            <input type="text" id="calc-client-name" class="input-control" style="flex:1; text-align:left;" placeholder="Имя клиента...">
             <button class="btn-icon" onclick="getContact()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></button>
         </div>
     </div>
@@ -130,14 +130,18 @@
 </div>
 
 <div id="history" class="tab-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
         <h2 style="margin:0">Аналитика</h2>
         <button class="btn" style="width:auto; padding:8px 15px; background:var(--surface); border:1px solid var(--border); font-size:12px;" onclick="exportExcel()">📥 Excel</button>
     </div>
     <div class="card" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); border:none; text-align:center;">
-        <div style="font-size:12px; opacity:0.8;">Общая чистая прибыль</div>
+        <div style="font-size:12px; opacity:0.8;">Общая прибыль за всё время</div>
         <div id="stat-total" style="font-size:32px; font-weight:900;">0 ₽</div>
+        <div id="stat-filtered" class="filtered-total">По найденному: 0 ₽</div>
     </div>
+    
+    <input type="text" id="search-history" class="search-bar" placeholder="🔍 Поиск клиента или материала..." oninput="renderHistory()">
+    
     <div id="history-list"></div>
 </div>
 
@@ -171,19 +175,59 @@
 </div>
 
 <script>
-    // 1. ОТЛОВ ВСЕХ ОШИБОК
     window.onerror = function(msg, url, line) {
         showToast("Ошибка кода: строка " + line, true);
         return false;
     };
 
-    // Константы
     const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0tKKL8nq1xvlN5UNBvr34XtQSNb2md-d8fmDOtGPVIyinAw/formResponse";
-    const DB_KEY = "master_db_v11";
-    const SETTINGS_KEY = "master_set_v11";
+    
+    // ВЕЧНЫЕ КЛЮЧИ ХРАНЕНИЯ
+    const DB_KEY = "master_calc_history_final";
+    const SETTINGS_KEY = "master_calc_settings_final";
     let currentCalc = null;
 
-    // Всплывающие уведомления
+    // СУПЕР-МИГРАТОР (Собирает историю И настройки)
+    function migrateOldData() {
+        if (localStorage.getItem('migrated_to_final_v2')) return;
+        
+        // 1. Миграция истории
+        let allHistory = [];
+        const oldKeys = ['m_history', 'm_v7_history', 'master_history_ultimate', 'master_db_v11', 'master_db_v12', 'master_db_v13'];
+        
+        oldKeys.forEach(key => {
+            try {
+                const data = JSON.parse(localStorage.getItem(key));
+                if (data && Array.isArray(data)) allHistory = allHistory.concat(data);
+            } catch(e) {}
+        });
+
+        if (allHistory.length > 0) {
+            const unique = Array.from(new Map(allHistory.map(item => [item.id, item])).values());
+            unique.sort((a, b) => b.id - a.id);
+            localStorage.setItem(DB_KEY, JSON.stringify(unique));
+        }
+        
+        // 2. Миграция настроек
+        if (!localStorage.getItem(SETTINGS_KEY)) {
+            const oldSetKeys = ['master_set_v13', 'master_set_v12', 'master_set_v11', 'master_settings_ultimate', 'm_v7_settings'];
+            for (let key of oldSetKeys) {
+                const oldSet = localStorage.getItem(key);
+                if (oldSet) {
+                    localStorage.setItem(SETTINGS_KEY, oldSet);
+                    break;
+                }
+            }
+        }
+        
+        localStorage.setItem('migrated_to_final_v2', 'true');
+    }
+
+    // Защита от XSS
+    function escapeHTML(str) {
+        return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
     function showToast(text, isError = false) {
         const t = document.getElementById('toast'); 
         t.innerText = text; 
@@ -192,16 +236,13 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // БРОНЕБОЙНОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
     function openTab(id, btn) {
-        // Убираем активность со всех вкладок
         const contents = document.getElementsByClassName('tab-content');
         for(let i = 0; i < contents.length; i++) { contents[i].classList.remove('active'); }
         
         const buttons = document.getElementsByClassName('tab-btn');
         for(let i = 0; i < buttons.length; i++) { buttons[i].classList.remove('active'); }
         
-        // Включаем нужную
         document.getElementById(id).classList.add('active'); 
         if(btn) btn.classList.add('active');
         
@@ -210,16 +251,14 @@
         window.scrollTo(0, 0);
     }
 
-    // Контакты
     async function getContact() {
         if (!('contacts' in navigator)) return showToast("Нет доступа к контактам", true);
         try {
             const c = await navigator.contacts.select(['name'], { multiple: false });
             if (c.length > 0) document.getElementById('calc-client-name').value = c[0].name[0];
-        } catch (e) { console.log(e); }
+        } catch (e) {}
     }
 
-    // Загрузка и сохранение настроек
     function getSettings() {
         try {
             return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || { 
@@ -266,11 +305,15 @@
         showToast("База цен сохранена!");
     }
 
-    // Точная Математика
     function calculate() {
         const s = getSettings();
-        const clientName = document.getElementById('calc-client-name').value;
+        const clientName = document.getElementById('calc-client-name').value.trim();
         const wTime = parseFloat(document.getElementById('work-time').value.replace(',', '.')) || 0;
+        
+        if (!clientName && wTime <= 0) {
+            return showToast("Введите имя или часы работы", true);
+        }
+
         const rTime = parseFloat(document.getElementById('rent-time').value.replace(',', '.')) || 0;
         const cCount = parseInt(document.getElementById('cons-count').value) || 0;
         const rType = document.getElementById('rent-type').value;
@@ -303,6 +346,8 @@
         const total = exp + markup + salary;
         const profit = total - exp;
 
+        if (total <= 0) return showToast("Сумма чека 0 ₽", true);
+
         document.getElementById('res-salary').innerText = salary.toFixed(1) + ' ₽';
         document.getElementById('res-rent').innerText = rent.toFixed(1) + ' ₽';
         document.getElementById('res-consum').innerText = consumables.toFixed(1) + ' ₽';
@@ -319,31 +364,32 @@
             id: Date.now(), date: new Date().toLocaleDateString(), 
             name: clientName || 'Без имени', 
             recipe: recipeArr.length > 0 ? recipeArr.join(', ') : 'Без мат-в',
-            total, profit, exp, workTime: wTime 
+            total, profit, exp, workTime: wTime,
+            raw: { wTime, rTime, cCount, rType, gE, gB, gN, gNC, gP, gO, gBoost }
         };
     }
 
-    // Сохранение и отправка (ИСПРАВЛЕНА ОШИБКА IFRAME)
     function saveData() {
         if (!currentCalc) return;
         
+        let f = null;
+        let ifr = null;
+
         try {
-            // В телефон
             let h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
             h.unshift(currentCalc); 
             localStorage.setItem(DB_KEY, JSON.stringify(h));
 
-            // В Google Таблицу через невидимый iframe
             const iframeName = 'hidden_iframe_' + Date.now();
-            const ifr = document.createElement('iframe'); 
+            ifr = document.createElement('iframe'); 
             ifr.style.display = 'none'; 
-            ifr.name = iframeName; // Обязательно даем имя!
+            ifr.name = iframeName; 
             document.body.appendChild(ifr);
             
-            const f = document.createElement('form'); 
+            f = document.createElement('form'); 
             f.method = 'POST'; 
             f.action = FORM_URL; 
-            f.target = iframeName; // Указываем форму на этот iframe
+            f.target = iframeName; 
             
             const d = { 
                 "entry.1004283552": currentCalc.date, 
@@ -361,44 +407,84 @@
             document.body.appendChild(f); 
             f.submit();
 
-            // Прячем чек и показываем уведомление
-            showToast("Чек сохранен в Облако!");
+            showToast("Чек отправлен в Облако! ☁️");
             document.getElementById('res-box').style.display = 'none';
             
-            // Очищаем форму
+            // Очистка всех полей для нового расчета
             document.getElementById('calc-client-name').value = '';
+            document.getElementById('work-time').value = '1';
+            document.getElementById('rent-time').value = '1';
+            document.getElementById('cons-count').value = '1';
+            document.getElementById('rent-type').value = 'std';
             ['m-estel','m-bicolor','m-nuk','m-nuk-clear','m-powder','m-oxide','m-booster'].forEach(id => document.getElementById(id).value = '0');
             currentCalc = null;
             
-            // Возвращаемся в самое начало
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Убираем технический мусор через 1.5 секунды
-            setTimeout(() => { 
-                if (f.parentNode) document.body.removeChild(f);
-                if (ifr.parentNode) document.body.removeChild(ifr);
-            }, 1500);
             
         } catch(e) { 
             showToast("Ошибка сохранения", true); 
+        } finally {
+            setTimeout(() => { 
+                if (f && f.parentNode) document.body.removeChild(f);
+                if (ifr && ifr.parentNode) document.body.removeChild(ifr);
+            }, 5000);
         }
     }
 
-    // История
     function renderHistory() {
         const h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-        document.getElementById('stat-total').innerText = Math.round(h.reduce((s, i) => s + i.profit, 0)) + ' ₽';
-        document.getElementById('history-list').innerHTML = h.map(i => `
+        const searchQuery = document.getElementById('search-history').value.toLowerCase();
+        
+        const totalProfitAllTime = h.reduce((s, i) => s + i.profit, 0);
+        document.getElementById('stat-total').innerText = Math.round(totalProfitAllTime) + ' ₽';
+        
+        const filtered = h.filter(i => (i.name||'').toLowerCase().includes(searchQuery) || (i.recipe||'').toLowerCase().includes(searchQuery));
+        
+        const filteredLabel = document.getElementById('stat-filtered');
+        if(searchQuery.length > 0) {
+            filteredLabel.style.display = 'block';
+            filteredLabel.innerText = 'По найденному: ' + Math.round(filtered.reduce((s, i) => s + i.profit, 0)) + ' ₽';
+        } else {
+            filteredLabel.style.display = 'none';
+        }
+        
+        document.getElementById('history-list').innerHTML = filtered.map(i => `
             <div class="history-item">
-                <button class="btn-del" onclick="deleteItem(${i.id})">✖</button>
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom: 4px;">${i.date}</div>
-                <div style="font-weight:700; color:var(--text-main); font-size: 16px;">${i.name}</div>
-                <div style="font-size:13px; color:var(--text-muted); margin: 6px 0;"><b>Рецепт:</b> ${i.recipe}</div>
+                ${i.raw ? `<button class="btn-repeat" onclick="loadReceipt(${i.id})" title="Повторить расчет">↻</button>` : ''}
+                <button class="btn-del" onclick="deleteItem(${i.id})" title="Удалить">✖</button>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom: 4px;">${escapeHTML(i.date)}</div>
+                <div style="font-weight:700; color:var(--text-main); font-size: 16px;">${escapeHTML(i.name)}</div>
+                <div style="font-size:13px; color:var(--text-muted); margin: 6px 0;"><b>Рецепт:</b> ${escapeHTML(i.recipe)}</div>
                 <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px;">
                     <span style="color:var(--success); font-weight: 700;">+ ${Math.round(i.profit)} ₽</span> 
                     <span style="color:var(--text-muted); font-size: 14px;">Чек: ${Math.round(i.total)} ₽</span>
                 </div>
             </div>`).join('');
+    }
+
+    function loadReceipt(id) {
+        const h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+        const item = h.find(i => i.id === id);
+        if (!item || !item.raw) return showToast("Не удалось загрузить данные", true);
+
+        openTab('calc', document.querySelector('.tab-btn'));
+        
+        document.getElementById('calc-client-name').value = item.name; 
+        document.getElementById('rent-type').value = item.raw.rType || 'std';
+        document.getElementById('work-time').value = item.raw.wTime || 1;
+        document.getElementById('rent-time').value = item.raw.rTime || 1;
+        document.getElementById('cons-count').value = item.raw.cCount || 1;
+        
+        document.getElementById('m-estel').value = item.raw.gE || 0;
+        document.getElementById('m-bicolor').value = item.raw.gB || 0;
+        document.getElementById('m-nuk').value = item.raw.gN || 0;
+        document.getElementById('m-nuk-clear').value = item.raw.gNC || 0;
+        document.getElementById('m-powder').value = item.raw.gP || 0;
+        document.getElementById('m-oxide').value = item.raw.gO || 0;
+        document.getElementById('m-booster').value = item.raw.gBoost || 0;
+        
+        calculate();
+        showToast("Данные загружены!");
     }
 
     function deleteItem(id) {
@@ -413,7 +499,11 @@
         const h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
         if(h.length === 0) return showToast("История пуста", true);
         let csv = "\uFEFFДата;Клиент;Рецепт;Часы;Выручка;Прибыль;Затраты\n";
-        h.forEach(i => { csv += `"${i.date}";"${i.name}";"${i.recipe}";${i.workTime};${Math.round(i.total)};${Math.round(i.profit)};${Math.round(i.exp)}\n`; });
+        h.forEach(i => { 
+            const safeName = String(i.name || '').replace(/"/g, '""');
+            const safeRecipe = String(i.recipe || '').replace(/"/g, '""');
+            csv += `"${i.date}";"${safeName}";"${safeRecipe}";${i.workTime};${Math.round(i.total)};${Math.round(i.profit)};${Math.round(i.exp)}\n`; 
+        });
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -421,16 +511,12 @@
         link.click();
     }
 
-    // Запуск при открытии
     window.onload = function() {
+        migrateOldData(); 
         loadSettings();
-        
-        // Отключаем минусы в инпутах
         document.querySelectorAll('input[type="number"]').forEach(input => {
             input.addEventListener('input', function() { if (this.value !== "" && this.value < 0) this.value = 0; });
         });
-        
-        // Отложенная регистрация PWA (чтобы не тормозить систему)
         setTimeout(() => {
             try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); } catch(e){}
         }, 3000);
