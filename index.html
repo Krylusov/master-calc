@@ -324,38 +324,65 @@
     }
 
     // Сохранение и отправка
+   // Сохранение и отправка
     function saveData() {
         if (!currentCalc) return;
         
-        // В телефон
-        let h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-        h.unshift(currentCalc); 
-        localStorage.setItem(DB_KEY, JSON.stringify(h));
+        try {
+            // В телефон
+            let h = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+            h.unshift(currentCalc); 
+            localStorage.setItem(DB_KEY, JSON.stringify(h));
 
-        // В Google Таблицу
-        const ifr = document.createElement('iframe'); ifr.style.display='none'; document.body.appendChild(ifr);
-        const f = document.createElement('form'); f.method='POST'; f.action=FORM_URL; f.target=ifr.name;
-        
-        const d = { 
-            "entry.1004283552": currentCalc.date, 
-            "entry.366487715": `[${currentCalc.name}] ${currentCalc.recipe}`, 
-            "entry.180743673": currentCalc.workTime, 
-            "entry.1564921093": Math.round(currentCalc.total), 
-            "entry.233391810": Math.round(currentCalc.profit), 
-            "entry.1441756294": Math.round(currentCalc.exp) 
-        };
-        for (let k in d) { let i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=d[k]; f.appendChild(i); }
-        document.body.appendChild(f); f.submit();
+            // В Google Таблицу (ЗДЕСЬ БЫЛА ОШИБКА - вернул имя для iframe)
+            const iframeName = 'hidden_iframe_' + Date.now();
+            const ifr = document.createElement('iframe'); 
+            ifr.style.display = 'none'; 
+            ifr.name = iframeName; // <--- Вот эта спасительная строчка
+            document.body.appendChild(ifr);
+            
+            const f = document.createElement('form'); 
+            f.method = 'POST'; 
+            f.action = FORM_URL; 
+            f.target = iframeName; 
+            
+            const d = { 
+                "entry.1004283552": currentCalc.date, 
+                "entry.366487715": `[${currentCalc.name}] ${currentCalc.recipe}`, 
+                "entry.180743673": currentCalc.workTime, 
+                "entry.1564921093": Math.round(currentCalc.total), 
+                "entry.233391810": Math.round(currentCalc.profit), 
+                "entry.1441756294": Math.round(currentCalc.exp) 
+            };
+            for (let k in d) { 
+                let i = document.createElement('input'); 
+                i.type = 'hidden'; i.name = k; i.value = d[k]; 
+                f.appendChild(i); 
+            }
+            document.body.appendChild(f); 
+            f.submit();
 
-        showToast("Чек сохранен!");
-        document.getElementById('res-box').style.display = 'none';
-        
-        document.getElementById('calc-client-name').value = '';
-        ['m-estel','m-bicolor','m-nuk','m-nuk-clear','m-powder','m-oxide','m-booster'].forEach(id => document.getElementById(id).value = '0');
-        currentCalc = null;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        setTimeout(() => document.body.removeChild(ifr), 1500);
+            // Прячем чек и показываем уведомление
+            showToast("Чек сохранен в Облако!");
+            document.getElementById('res-box').style.display = 'none';
+            
+            // Очищаем форму
+            document.getElementById('calc-client-name').value = '';
+            ['m-estel','m-bicolor','m-nuk','m-nuk-clear','m-powder','m-oxide','m-booster'].forEach(id => document.getElementById(id).value = '0');
+            currentCalc = null;
+            
+            // Возвращаемся в самое начало
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Убираем технический мусор
+            setTimeout(() => { 
+                if (f.parentNode) document.body.removeChild(f);
+                if (ifr.parentNode) document.body.removeChild(ifr);
+            }, 1500);
+            
+        } catch(e) { 
+            showToast("Ошибка сохранения", true); 
+        }
     }
 
     // История
@@ -411,3 +438,4 @@
 </script>
 </body>
 </html>
+
