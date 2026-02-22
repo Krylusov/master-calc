@@ -1,4 +1,4 @@
-const CACHE_NAME = 'master-calc-v10';
+const CACHE_NAME = 'master-calc-v12';
 
 self.addEventListener('install', (e) => {
     self.skipWaiting();
@@ -15,8 +15,10 @@ self.addEventListener('activate', (e) => {
     self.clients.claim();
 });
 
-// Умный кэш: всегда пытаемся скачать свежую версию, если нет интернета — берем из памяти
+// Умный кэш: Игнорируем отправку данных (POST), чтобы не блокировать Google Форму!
 self.addEventListener('fetch', (e) => {
+    if (e.request.method !== 'GET') return; 
+
     e.respondWith(
         fetch(e.request)
             .then((res) => {
